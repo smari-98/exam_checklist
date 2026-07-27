@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Piano Laurea — Set 2026 → Lug 2027</title>
+<style>
+  :root {
+    --ink: #1c2321;
+    --paper: #f6f3ec;
+    --line: #d8d2c2;
+    --accent: #2f5d50;
+    --accent-soft: #b7d4c9;
+    --gold: #b8863b;
+    --muted: #6b6558;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Georgia', 'Iowan Old Style', serif;
+    line-height: 1.5;
+    padding: 40px 20px 80px;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  header { margin-bottom: 36px; }
+  .eyebrow {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 30px;
+    margin: 0 0 6px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .sub { color: var(--muted); font-size: 14.5px; }
+
+  .overall {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px 0 40px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .overall-num {
+    font-family: 'Courier New', monospace;
+    font-size: 26px;
+    color: var(--accent);
+    min-width: 62px;
+  }
+  .overall-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .overall-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .overall-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  .round {
+    margin-bottom: 28px;
+    border-left: 3px solid var(--line);
+    padding-left: 20px;
+    position: relative;
+  }
+  .round.done { border-left-color: var(--accent); }
+  .round-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .round-title {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .round-cfu {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--gold);
+  }
+
+  .exam {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+  }
+  .exam.checked { background: #eef4f0; }
+  .exam input[type="checkbox"] {
+    margin-top: 3px;
+    width: 17px;
+    height: 17px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .exam-body { flex: 1; }
+  .exam-name {
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .exam.checked .exam-name {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+  .exam-meta {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-family: 'Courier New', monospace;
+  }
+  .exam-note {
+    font-size: 13px;
+    color: #4a5f56;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .reset-row {
+    margin-top: 36px;
+    text-align: center;
+  }
+  button.reset {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+  }
+  button.reset:hover { border-color: var(--gold); color: var(--gold); }
+
+  .footnote {
+    margin-top: 30px;
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Piano di completamento — Triennale</div>
+    <h1>Settembre 2026 → Luglio 2027</h1>
+    <div class="sub">63 CFU rimasti, 8 esami, un round alla volta. Spunta man mano che superi ogni esame.</div>
+  </header>
+
+  <div class="overall">
+    <div class="overall-num" id="overallNum">0/8</div>
+    <div class="overall-bar-track"><div class="overall-bar-fill" id="overallBar"></div></div>
+    <div class="overall-label" id="overallLabel">0 / 63 CFU</div>
+  </div>
+
+  <div id="rounds"></div>
+
+  <div class="reset-row">
+    <button class="reset" id="resetBtn">azzera tutti i progressi</button>
+  </div>
+
+  <div class="footnote">
+    I progressi si salvano solo in questa sessione del browser (nessun salvataggio permanente in questo artifact) — usalo come promemoria visivo mentre studi, non come archivio a lungo termine.
+  </div>
+
+</div>
+
+<script>
+const data = [
+  {
+    round: "Settembre 2026",
+    exams: [
+      { name: "Fisica dell'elettromagnetismo", cfu: 6, note: "Parti da simulazioni/video pratici (es. PhET) prima della teoria." }
+    ]
+  },
+  {
+    round: "Ottobre – Novembre 2026",
+    exams: [
+      { name: "Reti di telecomunicazioni", cfu: 6, note: "Appello quasi mensile: sfrutta lo slancio, la conosci già bene." },
+      { name: "Fondamenti di telecomunicazioni", cfu: 9, note: "Propedeutica a Reti, ma la affronti dopo per motivazione." }
+    ]
+  },
+  {
+    round: "Gennaio 2027",
+    exams: [
+      { name: "Sistemi operativi", cfu: 12, note: "Aggancio diretto alla programmazione: usa il terminale in prima persona." }
+    ]
+  },
+  {
+    round: "Febbraio 2027",
+    exams: [
+      { name: "Automazione industriale", cfu: 6, note: "Molto applicativa: cerca casi reali di PLC e linee di produzione." }
+    ]
+  },
+  {
+    round: "Aprile 2027",
+    exams: [
+      { name: "Controllo digitale", cfu: 6, note: "Segue Automazione a ruota, stesso linguaggio ancora fresco." }
+    ]
+  },
+  {
+    round: "Giugno 2027",
+    exams: [
+      { name: "Meccanica applicata alle macchine", cfu: 6, note: "Più leggera: la tieni come cuscinetto prima dell'ultimo sforzo." }
+    ]
+  },
+  {
+    round: "Luglio 2027",
+    exams: [
+      { name: "Macchine elettriche", cfu: 12, note: "Il big boss finale — due appelli disponibili come rete di sicurezza." }
+    ]
+  }
+];
+
+const state = {};
+let idCounter = 0;
+
+const roundsEl = document.getElementById('rounds');
+
+data.forEach((r) => {
+  const roundDiv = document.createElement('div');
+  roundDiv.className = 'round';
+  roundDiv.dataset.roundIndex = r.round;
+
+  const totalCfu = r.exams.reduce((s, e) => s + e.cfu, 0);
+
+  const head = document.createElement('div');
+  head.className = 'round-head';
+  head.innerHTML = `<div class="round-title">${r.round}</div><div class="round-cfu">${totalCfu} CFU</div>`;
+  roundDiv.appendChild(head);
+
+  r.exams.forEach((ex) => {
+    const id = 'exam-' + (idCounter++);
+    state[id] = { cfu: ex.cfu, checked: false, roundDiv };
+
+    const examDiv = document.createElement('div');
+    examDiv.className = 'exam';
+    examDiv.id = id + '-wrap';
+    examDiv.innerHTML = `
+      <input type="checkbox" id="${id}">
+      <div class="exam-body">
+        <label class="exam-name" for="${id}">${ex.name}</label>
+        <div class="exam-meta">${ex.cfu} CFU</div>
+        <div class="exam-note">${ex.note}</div>
+      </div>
+    `;
+    roundDiv.appendChild(examDiv);
+
+    examDiv.querySelector('input').addEventListener('change', (e) => {
+      state[id].checked = e.target.checked;
+      examDiv.classList.toggle('checked', e.target.checked);
+      updateProgress();
+    });
+  });
+
+  roundsEl.appendChild(roundDiv);
+});
+
+function updateProgress() {
+  const ids = Object.keys(state);
+  const totalExams = ids.length;
+  const doneExams = ids.filter(id => state[id].checked).length;
+  const totalCfu = ids.reduce((s, id) => s + state[id].cfu, 0);
+  const doneCfu = ids.filter(id => state[id].checked).reduce((s, id) => s + state[id].cfu, 0);
+
+  document.getElementById('overallNum').textContent = `${doneExams}/${totalExams}`;
+  document.getElementById('overallLabel').textContent = `${doneCfu} / ${totalCfu} CFU`;
+  document.getElementById('overallBar').style.width = totalCfu > 0 ? (doneCfu / totalCfu * 100) + '%' : '0%';
+
+  document.querySelectorAll('.round').forEach(roundDiv => {
+    const inputs = roundDiv.querySelectorAll('input[type="checkbox"]');
+    const allChecked = inputs.length > 0 && Array.from(inputs).every(i => i.checked);
+    roundDiv.classList.toggle('done', allChecked);
+  });
+}
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.querySelectorAll('input[type="checkbox"]').forEach(i => {
+    i.checked = false;
+    i.dispatchEvent(new Event('change'));
+  });
+});
+</script>
+</body>
+</html>
